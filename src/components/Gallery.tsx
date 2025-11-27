@@ -1,29 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import theater1 from "@/assets/theater-1.jpg";
-import theater2 from "@/assets/theater-2.jpg";
-import theater3 from "@/assets/theater-3.jpg";
-import theater4 from "@/assets/theater-4.jpg";
-import theater5 from "@/assets/theater-5.jpg";
-import theater6 from "@/assets/theater-6.jpg";
-import theater7 from "@/assets/theater-7.jpg";
-import theater8 from "@/assets/theater-8.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-const galleryImages = [
-  { src: theater1, alt: "Producción teatral", aspect: "aspect-video" },
-  { src: theater2, alt: "Ensayo teatral", aspect: "aspect-square" },
-  { src: theater3, alt: "Preparación backstage", aspect: "aspect-video" },
-  { src: theater4, alt: "Actor en escena", aspect: "aspect-square" },
-  { src: theater5, alt: "Ensayo de grupo", aspect: "aspect-video" },
-  { src: theater6, alt: "Personaje de época", aspect: "aspect-square" },
-  { src: theater7, alt: "Función en vivo", aspect: "aspect-video" },
-  { src: theater8, alt: "Momento dramático", aspect: "aspect-square" },
-];
+interface GalleryImage {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string;
+  image_url: string;
+  display_order: number;
+}
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadImages();
+  }, []);
+
+  const loadImages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("gallery_images")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+
+      setGalleryImages(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar las imágenes de la galería",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -55,25 +75,45 @@ const Gallery = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {galleryImages.map((image, index) => (
-            <div
-              key={index}
-              className={`group relative overflow-hidden rounded-lg ${image.aspect} cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000`}
-              style={{ animationDelay: `${index * 100 + 300}ms` }}
-              onClick={() => openLightbox(index)}
-            >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="text-foreground font-medium">{image.alt}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Cargando galería...</p>
+          </div>
+        ) : galleryImages.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No hay imágenes en la galería aún.</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {galleryImages.map((image, index) => {
+              const isWide = index % 3 === 0;
+              return (
+                <div
+                  key={image.id}
+                  className={`group relative overflow-hidden rounded-lg ${
+                    isWide ? "aspect-video" : "aspect-square"
+                  } cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000`}
+                  style={{ animationDelay: `${index * 100 + 300}ms` }}
+                  onClick={() => openLightbox(index)}
+                >
+                  <img
+                    src={image.image_url}
+                    alt={image.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <div>
+                      <p className="text-foreground font-medium">{image.title}</p>
+                      {image.description && (
+                        <p className="text-foreground/70 text-sm mt-1">{image.description}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <p className="text-center text-sm text-muted-foreground mt-8 animate-in fade-in duration-1000 delay-700">
           Estas impresionantes fotos ofrecen una mirada única a mi vida actoral y el proceso 
@@ -105,16 +145,23 @@ const Gallery = () => {
 
               <div className="flex flex-col items-center justify-center max-h-full">
                 <img
-                  src={galleryImages[selectedImage].src}
-                  alt={galleryImages[selectedImage].alt}
+                  src={galleryImages[selectedImage].image_url}
+                  alt={galleryImages[selectedImage].title}
                   className="max-w-full max-h-[80vh] object-contain rounded-lg animate-in fade-in zoom-in duration-300"
                 />
-                <p className="text-foreground font-medium mt-4 text-center">
-                  {galleryImages[selectedImage].alt}
-                </p>
-                <p className="text-muted-foreground text-sm mt-2">
-                  {selectedImage + 1} / {galleryImages.length}
-                </p>
+                <div className="text-center mt-4 max-w-2xl">
+                  <p className="text-foreground font-medium text-lg">
+                    {galleryImages[selectedImage].title}
+                  </p>
+                  {galleryImages[selectedImage].description && (
+                    <p className="text-muted-foreground mt-2">
+                      {galleryImages[selectedImage].description}
+                    </p>
+                  )}
+                  <p className="text-muted-foreground text-sm mt-2">
+                    {selectedImage + 1} / {galleryImages.length}
+                  </p>
+                </div>
               </div>
 
               <Button
