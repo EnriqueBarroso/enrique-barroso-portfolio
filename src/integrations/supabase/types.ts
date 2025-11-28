@@ -49,6 +49,36 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      },
+      videos: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          url: string
+          display_order: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          url: string
+          display_order?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          url?: string
+          display_order?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

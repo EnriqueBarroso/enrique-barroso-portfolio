@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Film } from "lucide-react";
-import heroImage from "@/assets/hero-image.jpg";
+import { Film, FileText } from "lucide-react"; // Añadimos FileText aquí
+import heroImage from "@/assets/hero-image.jpg"; //
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
@@ -10,8 +10,14 @@ const Hero = () => {
     }
   };
 
+  const handleDownloadCV = () => {
+    // Asume que el archivo está en la carpeta /public
+    window.open("/cv.pdf", "_blank");
+  };
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Fondo con superposición oscura */}
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-transparent z-10" />
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -45,6 +51,7 @@ const Hero = () => {
                 <Film className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                 Ver Videos
               </Button>
+              
               <Button
                 size="lg"
                 variant="outline"
@@ -53,9 +60,21 @@ const Hero = () => {
               >
                 Contactar
               </Button>
+
+              {/* NUEVO BOTÓN CV */}
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={handleDownloadCV}
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium"
+              >
+                <FileText className="mr-2 h-5 w-5" />
+                Descargar CV
+              </Button>
             </div>
           </div>
 
+          {/* Estadísticas a la derecha (Visible solo en escritorio) */}
           <div className="hidden lg:flex flex-col items-end space-y-12 animate-in fade-in slide-in-from-right duration-1000 delay-300">
             <div className="text-right space-y-2">
               <Film className="w-12 h-12 text-primary ml-auto mb-4" />
