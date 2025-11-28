@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"; // IMPORTANTE: Añadido useCallback
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Trash2, Video, Image as ImageIcon, Plus, ArrowLeft } from "lucide-react";
+import { LogOut, Trash2, Video, Image as ImageIcon, Plus, ArrowLeft, Upload } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 
 interface GalleryImage {
@@ -26,6 +26,7 @@ interface VideoItem {
   title: string;
   description: string | null;
   url: string;
+  thumbnail_url: string | null;
   display_order: number;
 }
 
@@ -34,17 +35,20 @@ const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Estados para Galería
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState(false); // Estado de carga compartido
   const [imageTitle, setImageTitle] = useState("");
   const [imageDescription, setImageDescription] = useState("");
   const [imageCategory, setImageCategory] = useState("produccion");
 
+  // Estados para Videos
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [addingVideo, setAddingVideo] = useState(false);
   const [videoTitle, setVideoTitle] = useState("");
   const [videoDescription, setVideoDescription] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [videoThumbnail, setVideoThumbnail] = useState("");
 
   // --- Autenticación ---
   useEffect(() => {
@@ -61,7 +65,7 @@ const Admin = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // --- Funciones de Carga (Memorizadas con useCallback) ---
+  // --- Funciones de Carga ---
   const loadImages = useCallback(async () => {
     const { data, error } = await supabase
       .from("gallery_images")
@@ -88,20 +92,19 @@ const Admin = () => {
     }
   }, [toast]);
 
-  // --- Efecto de Carga Inicial ---
   useEffect(() => {
     if (session) {
       loadImages();
       loadVideos();
     }
-  }, [session, loadImages, loadVideos]); // Dependencias completas
+  }, [session, loadImages, loadVideos]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
 
-  // --- Lógica de Galería ---
+  // --- Lógica de Galería (Sube y crea registro público) ---
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -145,6 +148,36 @@ const Admin = () => {
     }
   };
 
+  // --- Lógica de Miniatura de Video (Sube pero NO crea registro en galería) ---
+  const handleThumbnailUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      // Usamos el prefijo 'thumb_' para identificar estos archivos en el storage si alguna vez lo miras
+      const fileName = `thumb_${Math.random().toString(36).substring(2)}.${fileExt}`;
+      
+      // Subimos al mismo bucket 'gallery-images' porque ya tiene los permisos configurados
+      const { error: uploadError } = await supabase.storage.from("gallery-images").upload(fileName, file);
+      
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage.from("gallery-images").getPublicUrl(fileName);
+      
+      // SOLO rellenamos el campo de texto, NO guardamos en la tabla 'gallery_images'
+      setVideoThumbnail(publicUrl);
+      toast({ title: "Imagen lista", description: "La URL se ha generado automáticamente." });
+      
+    } catch (error) {
+      const message = (error as Error).message || "Error al subir miniatura";
+      toast({ title: "Error", description: message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleDeleteImage = async (image: GalleryImage) => {
     if (!confirm("¿Estás seguro de eliminar esta imagen?")) return;
     try {
@@ -175,6 +208,7 @@ const Admin = () => {
         title: videoTitle,
         description: videoDescription,
         url: videoUrl,
+        thumbnail_url: videoThumbnail || null,
         display_order: videos.length,
       });
 
@@ -184,6 +218,7 @@ const Admin = () => {
       setVideoTitle("");
       setVideoDescription("");
       setVideoUrl("");
+      setVideoThumbnail("");
       loadVideos();
     } catch (error) {
       const message = (error as Error).message || "Error al añadir video";
@@ -312,11 +347,44 @@ const Admin = () => {
                     <Input id="vid-url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://instagram.com/..." />
                   </div>
                 </div>
+                
+                {/* --- NUEVO SISTEMA DE SUBIDA DE MINIATURA --- */}
+                <div className="space-y-2">
+                  <Label>Imagen de Portada (Miniatura)</Label>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1">
+                      <Input 
+                        id="vid-thumb" 
+                        value={videoThumbnail} 
+                        onChange={(e) => setVideoThumbnail(e.target.value)} 
+                        placeholder="Pega una URL o sube una imagen ->" 
+                      />
+                    </div>
+                    <div className="shrink-0">
+                      <Label htmlFor="thumb-upload" className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full sm:w-auto">
+                        <Upload className="mr-2 h-4 w-4" />
+                        Subir Archivo
+                        <Input 
+                          id="thumb-upload" 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={handleThumbnailUpload}
+                          disabled={uploading} 
+                        />
+                      </Label>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Tip: Si subes la imagen desde aquí, no aparecerá en tu galería pública.
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="vid-desc">Descripción</Label>
                   <Textarea id="vid-desc" value={videoDescription} onChange={(e) => setVideoDescription(e.target.value)} placeholder="Breve descripción del clip..." />
                 </div>
-                <Button onClick={handleAddVideo} disabled={addingVideo} className="w-full md:w-auto">
+                <Button onClick={handleAddVideo} disabled={addingVideo || uploading} className="w-full md:w-auto">
                   <Plus className="mr-2 h-4 w-4" /> Añadir Video
                 </Button>
               </CardContent>
@@ -331,8 +399,12 @@ const Admin = () => {
                   {videos.map((video) => (
                     <div key={video.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors">
                       <div className="flex items-center gap-4 overflow-hidden">
-                        <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center shrink-0">
-                          <Video className="h-5 w-5 text-primary" />
+                        <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
+                          {video.thumbnail_url ? (
+                            <img src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <Video className="h-5 w-5 text-primary" />
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="font-medium truncate">{video.title}</p>

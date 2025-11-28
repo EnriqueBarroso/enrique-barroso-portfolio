@@ -7,8 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
@@ -56,6 +54,7 @@ export type Database = {
           title: string
           description: string | null
           url: string
+          thumbnail_url: string | null  // <--- NUEVO CAMPO AÑADIDO
           display_order: number | null
           created_at: string | null
           updated_at: string | null
@@ -65,6 +64,7 @@ export type Database = {
           title: string
           description?: string | null
           url: string
+          thumbnail_url?: string | null // <--- NUEVO CAMPO AÑADIDO
           display_order?: number | null
           created_at?: string | null
           updated_at?: string | null
@@ -74,6 +74,7 @@ export type Database = {
           title?: string
           description?: string | null
           url?: string
+          thumbnail_url?: string | null // <--- NUEVO CAMPO AÑADIDO
           display_order?: number | null
           created_at?: string | null
           updated_at?: string | null
@@ -95,6 +96,9 @@ export type Database = {
     }
   }
 }
+
+// ... (El resto del archivo sigue igual, pero para no liarte, te he puesto la parte importante arriba. 
+// Si prefieres, puedes dejar el resto como estaba, solo hemos tocado la sección 'videos')
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 

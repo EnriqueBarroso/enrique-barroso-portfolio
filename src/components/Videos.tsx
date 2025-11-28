@@ -1,14 +1,15 @@
-import { useEffect, useState, useCallback } from "react"; // IMPORTANTE: Añadido useCallback
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Instagram } from "lucide-react";
+import { Instagram, Play } from "lucide-react"; // Importamos Play también por si acaso
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast"; // Corregida la ruta si usas hooks/use-toast
+import { useToast } from "@/hooks/use-toast";
 
 interface Video {
   id: string;
   title: string;
   description: string | null;
   url: string;
+  thumbnail_url: string | null; // AÑADIDO
   display_order: number;
 }
 
@@ -17,7 +18,6 @@ const Videos = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Envolvemos la función con useCallback para estabilizarla
   const fetchVideos = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -37,11 +37,11 @@ const Videos = () => {
     } finally {
       setLoading(false);
     }
-  }, [toast]); // 'toast' es la única dependencia externa
+  }, [toast]);
 
   useEffect(() => {
     fetchVideos();
-  }, [fetchVideos]); // Ahora sí incluimos fetchVideos en las dependencias
+  }, [fetchVideos]);
 
   return (
     <section id="videos" className="py-24 bg-secondary/30">
@@ -69,12 +69,26 @@ const Videos = () => {
                 className="group relative overflow-hidden rounded-lg bg-card border border-border hover:border-primary/50 transition-all duration-300 animate-in fade-in slide-in-from-bottom"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
-                <div className="aspect-[9/16] bg-gradient-to-br from-primary/20 to-secondary flex items-center justify-center">
-                  <Instagram className="w-16 h-16 text-primary/40" />
+                {/* ZONA DE IMAGEN/MINIATURA */}
+                <div className="aspect-[9/16] bg-gradient-to-br from-primary/20 to-secondary flex items-center justify-center relative overflow-hidden">
+                  {video.thumbnail_url ? (
+                    <>
+                      <img 
+                        src={video.thumbnail_url} 
+                        alt={video.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                      />
+                      {/* Capa oscura para que se lea mejor el botón al pasar el ratón */}
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+                    </>
+                  ) : (
+                    <Instagram className="w-16 h-16 text-primary/40" />
+                  )}
                 </div>
+
                 <div className="p-6 space-y-3">
                   <h3 className="font-display font-semibold text-xl">{video.title}</h3>
-                  <p className="text-sm text-muted-foreground">{video.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{video.description}</p>
                   <Button
                     variant="outline"
                     className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
