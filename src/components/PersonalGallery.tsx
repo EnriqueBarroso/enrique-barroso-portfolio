@@ -7,10 +7,7 @@ import { personalImages } from "@/data/content";
 const PersonalGallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
-  // Don't render section if no personal images
-  if (personalImages.length === 0) {
-    return null;
-  }
+  const hasImages = personalImages.length > 0;
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -41,30 +38,36 @@ const PersonalGallery = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {personalImages.map((image, index) => (
-            <div
-              key={image.id}
-              className="group relative overflow-hidden rounded-xl aspect-square cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000"
-              style={{ animationDelay: `${index * 100 + 300}ms` }}
-              onClick={() => openLightbox(index)}
-            >
-              <img
-                src={image.src}
-                alt={image.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div>
-                  <p className="text-foreground font-medium text-sm">{image.title}</p>
-                  {image.description && (
-                    <p className="text-foreground/70 text-xs mt-1 line-clamp-2">{image.description}</p>
-                  )}
+        {hasImages ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {personalImages.map((image, index) => (
+              <div
+                key={image.id}
+                className="group relative overflow-hidden rounded-xl aspect-square cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000"
+                style={{ animationDelay: `${index * 100 + 300}ms` }}
+                onClick={() => openLightbox(index)}
+              >
+                <img
+                  src={image.src}
+                  alt={image.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div>
+                    <p className="text-foreground font-medium text-sm">{image.title}</p>
+                    {image.description && (
+                      <p className="text-foreground/70 text-xs mt-1 line-clamp-2">{image.description}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            Pronto habrá nuevas fotos personales.
+          </div>
+        )}
       </div>
 
       <Dialog open={selectedImage !== null} onOpenChange={closeLightbox}>
