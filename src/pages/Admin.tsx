@@ -294,6 +294,7 @@ const Admin = () => {
                       <option value="ensayo">Ensayo</option>
                       <option value="backstage">Backstage</option>
                       <option value="personaje">Personaje</option>
+                      <option value="personal">Personal / Fotos Actuales</option>
                     </select>
                   </div>
                 </div>

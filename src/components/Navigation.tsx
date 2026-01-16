@@ -54,6 +54,12 @@ const Navigation = () => {
             >
               VIDEOS
             </button>
+            <button
+              onClick={() => scrollToSection("personal")}
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              PERSONAL
+            </button>
             <Button
               onClick={() => scrollToSection("contact")}
               className="bg-primary text-primary-foreground hover:bg-accent font-medium"
