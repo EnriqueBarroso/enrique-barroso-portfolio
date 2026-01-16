@@ -1,50 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-interface GalleryImage {
-  id: string;
-  title: string;
-  description: string | null;
-  category: string;
-  image_url: string;
-  display_order: number;
-}
+import { personalImages } from "@/data/content";
 
 const PersonalGallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [personalImages, setPersonalImages] = useState<GalleryImage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
-  useEffect(() => {
-    loadImages();
-  }, []);
-
-  const loadImages = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("gallery_images")
-        .select("*")
-        .eq("category", "personal")
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-
-      setPersonalImages(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "No se pudieron cargar las imágenes personales",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Don't render section if no personal images
+  if (personalImages.length === 0) {
+    return null;
+  }
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -62,11 +28,6 @@ const PersonalGallery = () => {
     setSelectedImage((prev) => (prev === personalImages.length - 1 ? 0 : prev! + 1));
   };
 
-  // Don't render section if no personal images
-  if (!loading && personalImages.length === 0) {
-    return null;
-  }
-
   return (
     <section id="personal" className="py-24 bg-secondary/30">
       <div className="container mx-auto px-6">
@@ -80,36 +41,30 @@ const PersonalGallery = () => {
           </p>
         </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Cargando fotos...</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {personalImages.map((image, index) => (
-              <div
-                key={image.id}
-                className="group relative overflow-hidden rounded-xl aspect-square cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000"
-                style={{ animationDelay: `${index * 100 + 300}ms` }}
-                onClick={() => openLightbox(index)}
-              >
-                <img
-                  src={image.image_url}
-                  alt={image.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <div>
-                    <p className="text-foreground font-medium text-sm">{image.title}</p>
-                    {image.description && (
-                      <p className="text-foreground/70 text-xs mt-1 line-clamp-2">{image.description}</p>
-                    )}
-                  </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {personalImages.map((image, index) => (
+            <div
+              key={image.id}
+              className="group relative overflow-hidden rounded-xl aspect-square cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000"
+              style={{ animationDelay: `${index * 100 + 300}ms` }}
+              onClick={() => openLightbox(index)}
+            >
+              <img
+                src={image.src}
+                alt={image.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div>
+                  <p className="text-foreground font-medium text-sm">{image.title}</p>
+                  {image.description && (
+                    <p className="text-foreground/70 text-xs mt-1 line-clamp-2">{image.description}</p>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
 
       <Dialog open={selectedImage !== null} onOpenChange={closeLightbox}>
@@ -136,7 +91,7 @@ const PersonalGallery = () => {
 
               <div className="flex flex-col items-center justify-center max-h-full">
                 <img
-                  src={personalImages[selectedImage].image_url}
+                  src={personalImages[selectedImage].src}
                   alt={personalImages[selectedImage].title}
                   className="max-w-full max-h-[80vh] object-contain rounded-lg animate-in fade-in zoom-in duration-300"
                 />

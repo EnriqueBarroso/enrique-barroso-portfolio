@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
@@ -66,12 +64,6 @@ const Navigation = () => {
             >
               CONTACTO
             </Button>
-            <Link to="/auth">
-              <Button variant="outline" size="sm">
-                <LogIn className="mr-2 h-4 w-4" />
-                Admin
-              </Button>
-            </Link>
           </div>
         </div>
       </div>
