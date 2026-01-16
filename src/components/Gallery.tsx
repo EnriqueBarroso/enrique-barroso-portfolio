@@ -1,50 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-interface GalleryImage {
-  id: string;
-  title: string;
-  description: string | null;
-  category: string;
-  image_url: string;
-  display_order: number;
-}
+import { galleryImages } from "@/data/content";
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    loadImages();
-  }, []);
-
-  const loadImages = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("gallery_images")
-        .select("*")
-        .neq("category", "personal")
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-
-      setGalleryImages(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "No se pudieron cargar las imágenes de la galería",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -63,65 +24,55 @@ const Gallery = () => {
   };
 
   return (
-    <section id="gallery" className="py-24">
+    <section id="gallery" className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mb-16 animate-in fade-in slide-in-from-bottom duration-1000">
           <h2 className="text-4xl md:text-6xl font-display font-bold mb-6">
-            Capturando Momentos,{" "}
-            <span className="text-primary">Mostrando Talento</span>
+            Galería de{" "}
+            <span className="text-primary">Momentos</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Una mirada detrás del telón con magníficas tomas de ensayos, sets de filmación 
-            y producciones teatrales.
+            Una colección de imágenes que capturan la esencia de mis interpretaciones en el escenario.
           </p>
         </div>
 
-        {loading ? (
+        {galleryImages.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Cargando galería...</p>
-          </div>
-        ) : galleryImages.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No hay imágenes en la galería aún.</p>
+            <p className="text-muted-foreground">Próximamente nuevas imágenes.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {galleryImages.map((image, index) => {
-              const isWide = index % 3 === 0;
-              return (
-                <div
-                  key={image.id}
-                  className={`group relative overflow-hidden rounded-lg ${
-                    isWide ? "aspect-video" : "aspect-square"
-                  } cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000`}
-                  style={{ animationDelay: `${index * 100 + 300}ms` }}
-                  onClick={() => openLightbox(index)}
-                >
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {galleryImages.map((image, index) => (
+              <div
+                key={image.id}
+                className={`group relative overflow-hidden rounded-xl cursor-pointer animate-in fade-in slide-in-from-bottom duration-1000 ${
+                  index === 0 || index === 5 ? "md:col-span-2 md:row-span-2" : ""
+                }`}
+                style={{ animationDelay: `${index * 100 + 300}ms` }}
+                onClick={() => openLightbox(index)}
+              >
+                <div className={`${index === 0 || index === 5 ? "aspect-square" : "aspect-[3/4]"}`}>
                   <img
-                    src={image.image_url}
+                    src={image.src}
                     alt={image.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                    <div>
-                      <p className="text-foreground font-medium">{image.title}</p>
-                      {image.description && (
-                        <p className="text-foreground/70 text-sm mt-1">{image.description}</p>
-                      )}
-                    </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div>
+                    <p className="text-foreground font-medium">{image.title}</p>
+                    {image.description && (
+                      <p className="text-foreground/70 text-sm mt-1">{image.description}</p>
+                    )}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
-
-        <p className="text-center text-sm text-muted-foreground mt-8 animate-in fade-in duration-1000 delay-700">
-          Estas impresionantes fotos ofrecen una mirada única a mi vida actoral y el proceso 
-          creativo detrás de mis interpretaciones.
-        </p>
       </div>
 
+      {/* Lightbox */}
       <Dialog open={selectedImage !== null} onOpenChange={closeLightbox}>
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-background/95 backdrop-blur-sm border-border">
           <Button
@@ -146,7 +97,7 @@ const Gallery = () => {
 
               <div className="flex flex-col items-center justify-center max-h-full">
                 <img
-                  src={galleryImages[selectedImage].image_url}
+                  src={galleryImages[selectedImage].src}
                   alt={galleryImages[selectedImage].title}
                   className="max-w-full max-h-[80vh] object-contain rounded-lg animate-in fade-in zoom-in duration-300"
                 />

@@ -1,48 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Instagram, Play } from "lucide-react"; // Importamos Play también por si acaso
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-interface Video {
-  id: string;
-  title: string;
-  description: string | null;
-  url: string;
-  thumbnail_url: string | null; // AÑADIDO
-  display_order: number;
-}
+import { Instagram } from "lucide-react";
+import { videos } from "@/data/content";
 
 const Videos = () => {
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
-  const fetchVideos = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from('videos' as any)
-        .select('*')
-        .order('display_order', { ascending: true });
-
-      if (error) throw error;
-      setVideos((data as unknown as Video[]) || []);
-    } catch (error) {
-      console.error('Error cargando videos:', error);
-      toast({
-        title: "Error",
-        description: "No se pudieron cargar los videos.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    fetchVideos();
-  }, [fetchVideos]);
-
   return (
     <section id="videos" className="py-24 bg-secondary/30">
       <div className="container mx-auto px-6">
@@ -57,10 +17,10 @@ const Videos = () => {
           </p>
         </div>
 
-        {loading ? (
-          <div className="text-center py-12 text-muted-foreground">Cargando videos...</div>
-        ) : videos.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">Pronto habrá nuevos videos.</div>
+        {videos.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            Pronto habrá nuevos videos.
+          </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {videos.map((video, index) => (
@@ -71,14 +31,13 @@ const Videos = () => {
               >
                 {/* ZONA DE IMAGEN/MINIATURA */}
                 <div className="aspect-[9/16] bg-gradient-to-br from-primary/20 to-secondary flex items-center justify-center relative overflow-hidden">
-                  {video.thumbnail_url ? (
+                  {video.thumbnailSrc ? (
                     <>
                       <img 
-                        src={video.thumbnail_url} 
+                        src={video.thumbnailSrc} 
                         alt={video.title} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                       />
-                      {/* Capa oscura para que se lea mejor el botón al pasar el ratón */}
                       <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                     </>
                   ) : (
