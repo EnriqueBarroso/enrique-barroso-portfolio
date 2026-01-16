@@ -21,12 +21,12 @@ const Videos = () => {
   const fetchVideos = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('videos')
+        .from('videos' as any)
         .select('*')
         .order('display_order', { ascending: true });
 
       if (error) throw error;
-      setVideos(data || []);
+      setVideos((data as unknown as Video[]) || []);
     } catch (error) {
       console.error('Error cargando videos:', error);
       toast({

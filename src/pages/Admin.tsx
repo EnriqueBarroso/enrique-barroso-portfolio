@@ -81,14 +81,14 @@ const Admin = () => {
 
   const loadVideos = useCallback(async () => {
     const { data, error } = await supabase
-      .from("videos")
+      .from("videos" as any)
       .select("*")
       .order("display_order", { ascending: true });
 
     if (error) {
       toast({ title: "Error", description: "No se pudieron cargar los videos", variant: "destructive" });
     } else {
-      setVideos(data || []);
+      setVideos((data as unknown as VideoItem[]) || []);
     }
   }, [toast]);
 
@@ -204,7 +204,7 @@ const Admin = () => {
 
     setAddingVideo(true);
     try {
-      const { error } = await supabase.from("videos").insert({
+      const { error } = await (supabase.from("videos" as any) as any).insert({
         title: videoTitle,
         description: videoDescription,
         url: videoUrl,
@@ -231,7 +231,7 @@ const Admin = () => {
   const handleDeleteVideo = async (id: string) => {
     if (!confirm("¿Estás seguro de eliminar este video?")) return;
     try {
-      const { error } = await supabase.from("videos").delete().eq("id", id);
+      const { error } = await (supabase.from("videos" as any) as any).delete().eq("id", id);
       if (error) throw error;
       toast({ title: "Éxito", description: "Video eliminado" });
       loadVideos();
