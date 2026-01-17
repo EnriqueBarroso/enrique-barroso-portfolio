@@ -125,6 +125,23 @@ export const galleryImages: GalleryImage[] = [
     obra: "Romeo y Julieta",
     descripción: "Escena antes de entrar a la fiesta de los Capuleto, junto a Romeo (Hansel Lestegás) y Bemboleo (Juan Carlos Garcia)."
   },
+  {
+    id: "13",
+    src: "/gallery/theater-13.jpg",
+    personaje: "Mercucio",
+    año: "2019",
+    obra: "Romeo y Julieta",
+    descripción: "Escena antes de entrar a la fiesta de los Capuleto, junto a Romeo (Hansel Lestegás) y Bemboleo (Juan Carlos Garcia)."
+  },
+  {
+    id: "14",
+    src: "/gallery/theater-14.jpg",
+    personaje: "Mercucio",
+    año: "2019",
+    obra: "Romeo y Julieta",
+    descripción: "Mercucio herido de muerte"
+  },
+  
   // Añade más imágenes aquí para probar el botón "Cargar más"
 ];
 
@@ -182,37 +199,42 @@ export const personalImages: PersonalImage[] = [
 export const videos: Video[] = [
   {
     id: "v1",
-    title: "Reel Actoral 2024",
-    description: "Recopilación de escenas de televisión y teatro.",
+    title: "Ejercicio de actuación #1",
+    description: "Escena 1",
     url: "https://www.instagram.com/p/ChsOVqLl5JE/", 
     thumbnailSrc: "/gallery/escena-1.jpg", 
   },
   {
     id: "v2",
-    title: "Reel Actoral 2024",
-    description: "Recopilación de escenas de televisión y teatro.",
+    title: "Reel Actoral 2025",
+    description: "Lo pensé mucho, pero igualmente lo hice",
     url: "https://www.instagram.com/p/DNqWGZ5P3Y7/", 
     thumbnailSrc: "/gallery/escena-2.jpg", 
   },
   {
     id: "v3",
-    title: "Reel Actoral 2024",
-    description: "Recopilación de escenas de televisión y teatro.",
+    title: "Reel Actoral 2023",
+    description: "Aproximación al personaje de Cristinito (Alexis Valdés)",
     url: "https://www.instagram.com/p/ClMc6OdA6R0/", 
     thumbnailSrc: "/gallery/escena-3.jpg", 
   },
   {
     id: "v4",
-    title: "Reel Actoral 2024",
-    description: "Recopilación de escenas de televisión y teatro.",
+    title: "Reel Actoral 2023",
+    description: "Puntería",
     url: "https://www.instagram.com/reel/CsBAEcHvE_p/", 
     thumbnailSrc: "/gallery/escena-4.jpg", 
   },
   {
     id: "v5",
-    title: "Reel Actoral 2024",
-    description: "Recopilación de escenas de televisión y teatro.",
+    title: "Reel Actoral 2013",
+    description: "Obra: El cartero de Neruda Personaje: Don Cosme",
     url: "https://www.instagram.com/reel/Cr3WfxjOwuj/", 
     thumbnailSrc: "/gallery/escena-5.jpg", 
   },
 ];
+
+export const socialLinks = {
+  instagram: "https://www.instagram.com/03_enrique_actor/", // Reemplaza con tu link real
+  email: "tu@email.com", // Tu correo para el footer y contacto
+};
