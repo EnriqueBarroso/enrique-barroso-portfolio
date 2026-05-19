@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { galleryImages } from "@/data/content";
+
+// Deriva la ruta del thumbnail desde el src original.
+// Funciona antes y después de la optimización: si el thumb no existe, el onError del img recarga el src completo.
+function getThumbSrc(src: string): string {
+  const dot = src.lastIndexOf('.');
+  return dot === -1 ? src : src.slice(0, dot) + '-thumb.webp';
+}
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -11,8 +18,8 @@ const Gallery = () => {
   const INITIAL_DISPLAY = 8;
   const [visibleCount, setVisibleCount] = useState(INITIAL_DISPLAY);
 
-  const imagesToShow = galleryImages.slice(0, visibleCount);
-  const hasMore = visibleCount < galleryImages.length;
+  const imagesToShow = useMemo(() => galleryImages.slice(0, visibleCount), [visibleCount]);
+  const hasMore = useMemo(() => visibleCount < galleryImages.length, [visibleCount]);
 
   const loadMore = () => {
     setVisibleCount((prev) => prev + 4);
@@ -56,9 +63,11 @@ const Gallery = () => {
               >
                 <div className={`${isLarge ? "aspect-square" : "aspect-[3/4]"}`}>
                   <img
-                    src={image.src}
+                    src={getThumbSrc(image.src)}
+                    onError={(e) => { (e.target as HTMLImageElement).src = image.src; }}
                     alt={`${image.personaje} en ${image.obra}`}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
@@ -159,4 +168,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default memo(Gallery);

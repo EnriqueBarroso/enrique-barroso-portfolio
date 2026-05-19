@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Film, FileText } from "lucide-react"; // Añadimos FileText aquí
-import heroImage from "@/assets/hero-image.jpg"; //
+import heroImage from "@/assets/hero-image.webp";
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
@@ -17,6 +17,8 @@ const Hero = () => {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Preload hint para el LCP — el navegador descarga el fondo con máxima prioridad */}
+      <img src={heroImage} alt="" aria-hidden fetchPriority="high" className="hidden" />
       {/* Fondo con superposición oscura */}
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-transparent z-10" />
       <div

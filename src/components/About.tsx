@@ -1,5 +1,5 @@
 import { Award, Briefcase } from "lucide-react"; // Añadimos Briefcase para variar iconos
-import aboutImage from "@/assets/about-image.jpg";
+import aboutImage from "@/assets/about-image.webp";
 
 const About = () => {
   return (
@@ -13,6 +13,8 @@ const About = () => {
               <img
                 src={aboutImage}
                 alt="Enrique Barroso"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>

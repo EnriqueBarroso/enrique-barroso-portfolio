@@ -31,7 +31,7 @@ export interface Video {
 export const galleryImages: GalleryImage[] = [
   {
     id: "1",
-    src: "/gallery/theater-1.jpg",
+    src: "/gallery/theater-1.webp",
     personaje: "Monteleone",
     año: "2017",
     obra: "¿Quién quiere comprar un pueblo?",
@@ -39,7 +39,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "2",
-    src: "/gallery/theater-2.jpg",
+    src: "/gallery/theater-2.webp",
     personaje: "Monteleone",
     año: "2017",
     obra: "¿Quién quiere comprar un pueblo?",
@@ -47,7 +47,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "3",
-    src: "/gallery/theater-3.jpg",
+    src: "/gallery/theater-3.webp",
     personaje: "Monteleone",
     año: "2017",
     obra: "¿Quién quiere comprar un pueblo?",
@@ -55,7 +55,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "4",
-    src: "/gallery/theater-4.jpg",
+    src: "/gallery/theater-4.webp",
     personaje: "Fernando",
     año: "2018",
     obra: "Cabaigüan-La Habana-Madrid",
@@ -63,7 +63,7 @@ export const galleryImages: GalleryImage[] = [
   },
    {
     id: "5",
-    src: "/gallery/theater-5.jpg",
+    src: "/gallery/theater-5.webp",
     personaje: "Fernando",
     año: "2018",
     obra: "Cabaigüan-La Habana-Madrid",
@@ -71,7 +71,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "6",
-    src: "/gallery/theater-6.jpg",
+    src: "/gallery/theater-6.webp",
     personaje: "El padre de Él",
     año: "2016",
     obra: "Ni un si, ni un no",
@@ -79,7 +79,7 @@ export const galleryImages: GalleryImage[] = [
   },
    {
     id: "7",
-    src: "/gallery/theater-7.jpg",
+    src: "/gallery/theater-7.webp",
     personaje: "Fernando",
     año: "2018",
     obra: "Cabaigüan-La Habana-Madrid",
@@ -87,7 +87,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "8",
-    src: "/gallery/theater-8.jpg",
+    src: "/gallery/theater-8.webp",
     personaje: "Comendador",
     año: "2015",
     obra: "Fuenteovejuna",
@@ -95,7 +95,7 @@ export const galleryImages: GalleryImage[] = [
   },
    {
     id: "9",
-    src: "/gallery/theater-9.jpg",
+    src: "/gallery/theater-9.webp",
     personaje: "Comendador",
     año: "2015",
     obra: "Fuenteovejuna",
@@ -103,7 +103,7 @@ export const galleryImages: GalleryImage[] = [
   },
    {
     id: "10",
-    src: "/gallery/theater-10.jpg",
+    src: "/gallery/theater-10.webp",
     personaje: "Comendador",
     año: "2015",
     obra: "Fuenteovejuna",
@@ -111,7 +111,7 @@ export const galleryImages: GalleryImage[] = [
   },
    {
     id: "11",
-    src: "/gallery/theater-11.jpg",
+    src: "/gallery/theater-11.webp",
     personaje: "Mercucio",
     año: "2019",
     obra: "Romeo y Julieta",
@@ -119,7 +119,7 @@ export const galleryImages: GalleryImage[] = [
   },
    {
     id: "12",
-    src: "/gallery/theater-12.jpg",
+    src: "/gallery/theater-12.webp",
     personaje: "Mercucio",
     año: "2019",
     obra: "Romeo y Julieta",
@@ -127,7 +127,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "13",
-    src: "/gallery/theater-13.jpg",
+    src: "/gallery/theater-13.webp",
     personaje: "Mercucio",
     año: "2019",
     obra: "Romeo y Julieta",
@@ -135,7 +135,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "14",
-    src: "/gallery/theater-14.jpg",
+    src: "/gallery/theater-14.webp",
     personaje: "Mercucio",
     año: "2019",
     obra: "Romeo y Julieta",
@@ -152,42 +152,42 @@ export const galleryImages: GalleryImage[] = [
 export const personalImages: PersonalImage[] = [
   {
     id: "p1",
-    src: "/gallery/personal-1.jpg", 
+    src: "/gallery/personal-1.webp", 
     título: "En el Estudio",
     año: "2025",
     lugar: "Barcelona"
   },
   {
     id: "p2",
-    src: "/gallery/personal-2.jpg",
+    src: "/gallery/personal-2.webp",
     título: "En el Estudio",
     año: "2025",
     lugar: "Barcelona"
   },
   {
     id: "p3",
-    src: "/gallery/personal-3.jpg",
+    src: "/gallery/personal-3.webp",
     título: "En el Estudio",
     año: "2025",
     lugar: "Barcelona"
   },
   {
     id: "p4",
-    src: "/gallery/personal-4.jpg",
+    src: "/gallery/personal-4.webp",
     título: "En el Estudio",
     año: "2025",
     lugar: "Barcelona"
   },
   {
     id: "p5",
-    src: "/gallery/personal-5.jpg",
+    src: "/gallery/personal-5.webp",
     título: "En el Estudio",
     año: "2025",
     lugar: "Barcelona"
   },
   {
     id: "p6",
-    src: "/gallery/personal-6.jpg",
+    src: "/gallery/personal-6.webp",
     título: "En el Estudio",
     año: "2025",
     lugar: "Barcelona"
@@ -202,35 +202,35 @@ export const videos: Video[] = [
     title: "Ejercicio de actuación #1",
     description: "Escena 1",
     url: "https://www.instagram.com/p/ChsOVqLl5JE/", 
-    thumbnailSrc: "/gallery/escena-1.jpg", 
+    thumbnailSrc: "/gallery/escena-1.webp", 
   },
   {
     id: "v2",
     title: "Reel Actoral 2025",
     description: "Lo pensé mucho, pero igualmente lo hice",
     url: "https://www.instagram.com/p/DNqWGZ5P3Y7/", 
-    thumbnailSrc: "/gallery/escena-2.jpg", 
+    thumbnailSrc: "/gallery/escena-2.webp", 
   },
   {
     id: "v3",
     title: "Reel Actoral 2023",
     description: "Aproximación al personaje de Cristinito (Alexis Valdés)",
     url: "https://www.instagram.com/p/ClMc6OdA6R0/", 
-    thumbnailSrc: "/gallery/escena-3.jpg", 
+    thumbnailSrc: "/gallery/escena-3.webp", 
   },
   {
     id: "v4",
     title: "Reel Actoral 2023",
     description: "Puntería",
     url: "https://www.instagram.com/reel/CsBAEcHvE_p/", 
-    thumbnailSrc: "/gallery/escena-4.jpg", 
+    thumbnailSrc: "/gallery/escena-4.webp", 
   },
   {
     id: "v5",
     title: "Reel Actoral 2013",
     description: "Obra: El cartero de Neruda Personaje: Don Cosme",
     url: "https://www.instagram.com/reel/Cr3WfxjOwuj/", 
-    thumbnailSrc: "/gallery/escena-5.jpg", 
+    thumbnailSrc: "/gallery/escena-5.webp", 
   },
 ];
 

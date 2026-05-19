@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { personalImages } from "@/data/content";
+
+function getThumbSrc(src: string): string {
+  const dot = src.lastIndexOf('.');
+  return dot === -1 ? src : src.slice(0, dot) + '-thumb.webp';
+}
 
 const PersonalGallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -11,8 +16,8 @@ const PersonalGallery = () => {
   const INITIAL_DISPLAY = 8;
   const [visibleCount, setVisibleCount] = useState(INITIAL_DISPLAY);
 
-  const imagesToShow = personalImages.slice(0, visibleCount);
-  const hasMore = visibleCount < personalImages.length;
+  const imagesToShow = useMemo(() => personalImages.slice(0, visibleCount), [visibleCount]);
+  const hasMore = useMemo(() => visibleCount < personalImages.length, [visibleCount]);
 
   const loadMore = () => {
     setVisibleCount((prev) => prev + 4); // Carga 4 más en cada clic
@@ -62,9 +67,11 @@ const PersonalGallery = () => {
                   >
                     <div className={`${isLarge ? "aspect-square" : "aspect-[3/4]"}`}>
                       <img
-                        src={image.src}
+                        src={getThumbSrc(image.src)}
+                        onError={(e) => { (e.target as HTMLImageElement).src = image.src; }}
                         alt={image.título}
                         loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     </div>
@@ -149,4 +156,4 @@ const PersonalGallery = () => {
   );
 };
 
-export default PersonalGallery;
+export default memo(PersonalGallery);
